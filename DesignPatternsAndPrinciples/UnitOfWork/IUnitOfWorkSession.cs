@@ -6,7 +6,5 @@
             where TEntity : class, IEntity, new();
 
         void Commit();
-
-        void Complate();
     }
 }

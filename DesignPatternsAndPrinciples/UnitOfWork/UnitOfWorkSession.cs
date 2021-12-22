@@ -29,6 +29,7 @@
 
             if (_repository != null)
             {
+                // repository SaveChange
                 foreach (var item in _repository.Actions)
                 {
                     item();
@@ -36,12 +37,6 @@
 
                 _repository.Actions.Clear();
             }
-        }
-
-        public void Complate()
-        {
-            Commit();
-            Dispose();
         }
 
         protected virtual void Dispose(bool disposing)
