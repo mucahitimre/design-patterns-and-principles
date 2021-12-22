@@ -1,1 +1,1 @@
-﻿global using System;
+﻿global using UnitOfWork.Abstractions;
