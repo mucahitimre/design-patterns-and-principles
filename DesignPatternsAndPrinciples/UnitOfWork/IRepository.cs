@@ -2,12 +2,7 @@
 
 namespace UnitOfWork
 {
-    public interface IRepository : IDisposable
-    {
-        List<Action> Actions { get; set; }
-    }
-
-    public interface IRepository<TEntity> : IRepository, IDisposable
+    public interface IRepository<TEntity> : IDisposable
         where TEntity : class, IEntity, new()
     {
         TEntity Get(Guid id);

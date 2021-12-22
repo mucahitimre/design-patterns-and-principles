@@ -2,22 +2,24 @@
 {
     public class UnitOfWorkSession : IUnitOfWorkSession, IDisposable
     {
+        private readonly IContextHandler _contextHandler;
         private readonly IServiceProvider _serviceProvider;
         private bool _disposedValue;
 
-        private IRepository _repository;
-
-        public UnitOfWorkSession(IServiceProvider serviceProvider)
+        public UnitOfWorkSession(
+            IContextHandler contextHandler,
+            IServiceProvider serviceProvider)
         {
+            _contextHandler = contextHandler;
             _serviceProvider = serviceProvider;
         }
 
         public IRepository<TEntity> GetRepository<TEntity>()
             where TEntity : class, IEntity, new()
         {
-            _repository = (IRepository<TEntity>)_serviceProvider.GetService(typeof(IRepository<TEntity>));
+            var repository = (IRepository<TEntity>)_serviceProvider.GetService(typeof(IRepository<TEntity>));
 
-            return (IRepository<TEntity>)_repository;
+            return repository;
         }
 
         public void Commit()
@@ -27,15 +29,22 @@
                 throw new Exception("The scope disposed.");
             }
 
-            if (_repository != null)
+            var context = _contextHandler.Context;
+            if (context is not null)
             {
                 // repository SaveChange
-                foreach (var item in _repository.Actions)
+                foreach (var item in context)
                 {
-                    item();
+                    var entity = item.Entity;
+                    var entityType = entity.GetType();
+                    Console.WriteLine($"{item.Action.Method.Name} method is runing for {entityType.Name} entity, id: {entity.Id}");
+
+                    item.Action();
+
+                    Console.WriteLine($"{item.Action.Method.Name} method is runned for {entityType.Name} entity, id: {entity.Id}");
                 }
 
-                _repository.Actions.Clear();
+                _contextHandler.ClearContext();
             }
         }
 
@@ -45,8 +54,9 @@
             {
                 if (disposing)
                 {
+                    Commit();
                     // TODO: dispose managed state (managed objects)
-                    _repository = null;
+                    _contextHandler.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer

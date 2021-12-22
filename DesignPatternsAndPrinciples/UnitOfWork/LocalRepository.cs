@@ -6,22 +6,26 @@ namespace UnitOfWork
         where TEntity : class, IEntity, new()
     {
         private bool _disposedValue;
+        private readonly IContextHandler _contextHandler;
 
-        public List<Action> Actions { get; set; } = new();
+        private List<TEntity> Entities { get; set; } = new List<TEntity>();
 
-        public List<TEntity> Entities { get; set; } = new List<TEntity>();
-
-        public LocalRepository()
+        public LocalRepository(IContextHandler contextHandler)
         {
+            _contextHandler = contextHandler;
         }
 
         public void Delete(TEntity entity)
         {
-            Actions.Add(() =>
+            _contextHandler.Context.Add(new ContextModel
             {
-                if (!Entities.Remove(entity))
+                Entity = entity,
+                Action = () =>
                 {
-                    // logger 
+                    if (!Entities.Remove(entity))
+                    {
+                        // logger 
+                    }
                 }
             });
         }
@@ -45,18 +49,26 @@ namespace UnitOfWork
 
         public void Insert(TEntity entity)
         {
-            Actions.Add(() => Entities.Add(entity));
+            _contextHandler.Context.Add(new ContextModel
+            {
+                Entity = entity,
+                Action = () => Entities.Add(entity)
+            });
         }
 
         public void Update(TEntity entity)
         {
-            Actions.Add(() =>
+            _contextHandler.Context.Add(new ContextModel
             {
-                var updated = Get(entity.Id);
-                if (updated != null)
+                Entity = entity,
+                Action = () =>
                 {
-                    var index = Entities.IndexOf(updated);
-                    Entities[index] = entity;
+                    var updated = Get(entity.Id);
+                    if (updated != null)
+                    {
+                        var index = Entities.IndexOf(updated);
+                        Entities[index] = entity;
+                    }
                 }
             });
         }
@@ -69,7 +81,7 @@ namespace UnitOfWork
                 {
                     // TODO: dispose managed state (managed objects)
                     GC.SuppressFinalize(Entities);
-                    GC.SuppressFinalize(Actions);
+                    GC.SuppressFinalize(_contextHandler);
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
