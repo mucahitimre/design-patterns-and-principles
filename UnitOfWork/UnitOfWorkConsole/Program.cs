@@ -66,7 +66,7 @@ public class Program
             //session.Commit();
         }
 
-        // Eğer hiç commit yapılmamış ise session biterken(dispose edilirken) commit olur.
+        // Eğer hiç commit yapılmamış ise session biterken(dispose edilirken) tüm değişiklikler uygulanır(commit edilir).
 
         Console.WriteLine("Bye world..");
         Console.ReadKey();
