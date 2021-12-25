@@ -14,8 +14,8 @@ public class Program
                 e.ClearProviders();
                 e.AddConsole();
             })
-            .AddScoped(typeof(IRepository<>), typeof(LocalRepository<>))
-            .AddScoped(typeof(IUnitOfWorkSession), typeof(UnitOfWorkSession))
+            .AddTransient(typeof(IRepository<>), typeof(LocalRepository<>))
+            .AddTransient(typeof(IUnitOfWorkSession), typeof(UnitOfWorkSession))
             .AddScoped(typeof(IContextHandler), typeof(ContextHandler))
             .BuildServiceProvider();
 
