@@ -1,8 +1,8 @@
 # Design patterns and principles
 
-- UnitOfWork
-- SingleResponsibility (Progressing..)
-- DependencyInversion (Progressing..)
-- OpenClose (Progressing..)
-- InterfaceSegregation (Progressing..)
-- LiskovsSubtitution (Progressing..)
+- UnitOfWork (Done..%100)
+- SingleResponsibility (Progressing..%98)
+- DependencyInversion (Progressing..%0)
+- OpenClose (Progressing..%0)
+- InterfaceSegregation (Progressing..%0)
+- LiskovsSubtitution (Progressing..%0)
