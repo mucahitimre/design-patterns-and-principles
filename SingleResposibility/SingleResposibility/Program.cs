@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System.Diagnostics;
 
 namespace SingleResposibility;
 
@@ -7,233 +6,77 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        //setup our DI
+        // Setup our DI
+        ServiceProvider Service = BuildServices();
 
-        var tedarikcies = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).Where(e => e.IsAssignableTo(typeof(ITedarikci)) && e != typeof(ITedarikci));
-        var serviceProvider = new ServiceCollection();
-
-        foreach (var item in tedarikcies)
+        var member = new Member();
+        var requestModel = new SearchModel()
         {
-            serviceProvider.AddScoped(typeof(ITedarikci), item);
-        }
+            NumberOfPersons = 5,
+            CityName = "Antalya",
+            StartDate = DateTime.Now,
+            EndDate = DateTime.Now.AddDays(5)
+        };
 
-        var host = serviceProvider
-            .AddScoped(typeof(IRezervasyonYapici), typeof(RezervasyonYapici))
-            .AddScoped(typeof(IRezervasyonCikti), typeof(RezervasyonCikti))
-            .AddScoped(typeof(IOnlineRezervasyonNew), typeof(OnlineRezervasyonNew))
-            .BuildServiceProvider();
-
-        var rez = host.GetService<IOnlineRezervasyonNew>();
-        var response = rez.OtelAra(new AramaModeli());
-        if (response != null && response.Any())
+        var finder = Service.GetService<IReservationFinder>();
+        var hotels = finder.Search(requestModel);
+        if (hotels != null && hotels.Any())
         {
-            var selectedOtel = response.First();
-            // mapping.. selectedOtel => Rezervasyon
-            var rezervasyon = new Rezervasyon()
+            var selectedOtel = hotels.First();
+            // select hotel: hotels.First()
+            var reservation = new DefaultReservation()
             {
-                KisiSayisi = 5,
-                Otel = selectedOtel.Ad
+                HotelId = selectedOtel.Id,
+                NumberOfPersons = requestModel.NumberOfPersons,
+                StartDate = requestModel.StartDate,
+                EndDate = requestModel.EndDate,
             };
 
-            var yap = host.GetService<IRezervasyonYapici>();
-            var isReseversion = yap.RezervasyonYap(rezervasyon);
-            if (isReseversion)
+            var builder = Service.GetService<IReservationBuilder>();
+            if (builder.Build(member, reservation))
             {
-                var cikti = host.GetService<IRezervasyonCikti>();
-                var ciktiUrl = cikti.RezervasyonCiktiAl(CiktiType.Pdf, rezervasyon);
+                var printer = Service.GetService<IReservationPrinter>();
+                var printerUrl = printer.GetDownloadUrl(PdfPrintProvider.KEY, reservation);
 
-                // redirect download ciktiUrl..
+                var emailSender = Service.GetService<IEmailSender>();
+                emailSender.SendAsyncEmail(member, reservation);
+
+                Console.WriteLine($"Download url {printerUrl.Result}");
+                Console.ReadKey();
+                // redirect download url..
             }
 
-            throw new Exception($"Kardeş {selectedOtel.Ad} otel'ine reservasyon yapamadım");
+            throw new Exception($"{selectedOtel.Name} hotel reservation could not be made..");
         }
 
         Console.WriteLine("Hello, World!");
         Console.ReadKey();
     }
-}
 
-public class OnlineRezervasyon
-{
-    /*
-     * Rezervasyon yapılması
-     * Otellerin aranması
-     * Çıktı alınması     
-     */
-
-    public List<Otel> OtelAra(string cityName, DateTime startDate, DateTime endDate, int count)
+    private static ServiceProvider BuildServices()
     {
-        var result = new List<Otel>();
-        result.AddRange(Tedarikci1OtelAra(cityName, startDate, endDate, count));
-        result.AddRange(Tedarikci2OtelAra(cityName, startDate, endDate, count));
-        result.AddRange(Tedarikci3OtelAra(cityName, startDate, endDate, count));
+        var vendors = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).Where(e => e.IsAssignableTo(typeof(IVendor)) && e != typeof(IVendor));
+        var providers = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).Where(e => e.IsAssignableTo(typeof(IPrinterDataProvider)) && e != typeof(IPrinterDataProvider));
+        var serviceProvider = new ServiceCollection();
 
-        var response = result.GroupBy(e => e.Id).Select(e => new Otel
+        foreach (var item in vendors)
         {
-            Id = e.Key,
-            Ad = e.First().Ad,
-            Ucret = e.Min(e => e.Ucret),
-            TedarikciId = e.Min(e => e.TedarikciId)
-        }).ToList();
+            serviceProvider.AddScoped(typeof(IVendor), item);
+        }
 
-        return response;
-    }
-
-    private List<Otel> Tedarikci1OtelAra(string cityName, DateTime startDate, DateTime endDate, int count)
-    {
-
-        return new List<Otel>();
-    }
-
-    private List<Otel> Tedarikci2OtelAra(string cityName, DateTime startDate, DateTime endDate, int count)
-    {
-
-        return new List<Otel>();
-    }
-
-    private List<Otel> Tedarikci3OtelAra(string cityName, DateTime startDate, DateTime endDate, int count)
-    {
-
-        return new List<Otel>();
-    }
-
-    public bool RezervasyonYap(string cityName, DateTime startDate, DateTime endDate, int count)
-    {
-        return true;
-    }
-
-    public void RezervasyonlarinCiktisiniAl()
-    {
-
-    }
-}
-
-public interface IOnlineRezervasyonNew
-{
-    List<IOtel> OtelAra(AramaModeli model);
-}
-
-public class OnlineRezervasyonNew : IOnlineRezervasyonNew
-{
-    private readonly IEnumerable<ITedarikci> _tedarikcis;
-
-    public OnlineRezervasyonNew(IEnumerable<ITedarikci> tedarikcis)
-    {
-        _tedarikcis = tedarikcis;
-    }
-
-    public List<IOtel> OtelAra(AramaModeli model)
-    {
-        var reponse = new List<IOtel>();
-        var timer = new Stopwatch();
-        timer.Start();
-        Parallel.ForEach(_tedarikcis, async item => reponse.AddRange(await item.OtelAra(model)));
-        timer.Stop();
-
-        Console.WriteLine(timer.ElapsedMilliseconds);
-
-        //1........ 10sn
-        //2..... 5sn
-        //3..1sn
-        //3.................25
-        var response = reponse.GroupBy(e => e.Id).Select(e => new Otel
+        foreach (var item in providers)
         {
-            Id = e.Key,
-            Ad = e.First().Ad,
-            Ucret = e.Min(e => e.Ucret),
-            TedarikciId = e.Min(e => e.TedarikciId)
-        }).ToList();
+            serviceProvider.AddScoped(typeof(IPrinterDataProvider), item);
+        }
 
-        return reponse;
+        var host = serviceProvider
+            .AddScoped(typeof(IReservationBuilder), typeof(ReservationBuilder))
+            .AddScoped(typeof(IReservationPrinter), typeof(ReservationPrinter))
+            .AddScoped(typeof(IReservationFinder), typeof(ReservationFinder))
+            .AddScoped(typeof(IEmailSender), typeof(EmailSender))
+            .AddScoped(typeof(IPrinter), typeof(FilePrinter))
+            .BuildServiceProvider();
+
+        return host;
     }
-}
-
-public interface IOtel
-{
-    int Id { get; set; }
-    string Ad { get; set; }
-    int Ucret { get; set; }
-    int TedarikciId { get; set; }
-}
-
-public class Otel : IOtel
-{
-    public int Id { get; set; }
-    public string Ad { get; set; }
-    public int Ucret { get; set; }
-    public int TedarikciId { get; set; }
-}
-
-public interface ITedarikci
-{
-    Task<List<IOtel>> OtelAra(AramaModeli arama);
-}
-
-public class Tadarikci1 : ITedarikci
-{
-    public Task<List<IOtel>> OtelAra(AramaModeli arama)
-    {
-        // servis bağlanıp..
-        Thread.Sleep(5000);
-
-        return Task.FromResult(new List<IOtel>());
-    }
-}
-
-public class Tadarikci2 : ITedarikci
-{
-    public Task<List<IOtel>> OtelAra(AramaModeli arama)
-    {
-        // excel import edebilir..
-        Thread.Sleep(5000);
-
-        return Task.FromResult(new List<IOtel>());
-    }
-}
-
-public class AramaModeli
-{
-    public string CityName { get; set; }
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
-    public int Count { get; set; }
-}
-
-internal interface IRezervasyonYapici
-{
-    bool RezervasyonYap(Rezervasyon rezervasyon);
-}
-
-public class RezervasyonYapici : IRezervasyonYapici
-{
-    public bool RezervasyonYap(Rezervasyon rezervasyon)
-    {
-        return true;
-    }
-}
-
-internal interface IRezervasyonCikti
-{
-    string RezervasyonCiktiAl(CiktiType ciktiType, Rezervasyon rezervasyon);
-}
-
-public class RezervasyonCikti : IRezervasyonCikti
-{
-    public string RezervasyonCiktiAl(CiktiType ciktiType, Rezervasyon rezervasyon)
-    {
-        return string.Empty;
-    }
-}
-
-public enum CiktiType
-{
-    Excel,
-    Pdf,
-    Text
-}
-
-public class Rezervasyon
-{
-    public string Otel { get; set; }
-    public int KisiSayisi { get; set; }
 }
