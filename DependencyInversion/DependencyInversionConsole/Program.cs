@@ -1,12 +1,23 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace DependencyInversionConsole
+namespace DependencyInversionConsole;
+
+internal class Program
 {
-    internal class Program
+    private static void Main(string[] args)
     {
-        static void Main(string[] args)
+        var services = new ServiceCollection();
+        services.AddTransient<INotificationService, NotificationService>();
+        services.AddTransient<INotificationProvider, AndroidNotificationProvider>();
+        services.AddTransient<INotificationProvider, AppleNotificationProvider>();
+        var ioc = services.BuildServiceProvider();
+
+        var notificationService = ioc.GetService<INotificationService>();
+        notificationService.SendNotification(new DefaultSendModel
         {
-            Console.WriteLine("Hello World!");
-        }
+            Message = "Alişverişiniz yola çıktı.."
+        }, e => e.Type.Name != typeof(AndroidNotificationProvider).Name);
+
+        Console.WriteLine("Hello World!");
     }
 }
