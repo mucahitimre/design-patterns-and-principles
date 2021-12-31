@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
+using UnitOfWorkConsole.Abstractions;
 
-namespace UnitOfWork
+namespace UnitOfWorkConsole
 {
     public class LocalRepository<TEntity> : IRepository<TEntity>
         where TEntity : class, IEntity, new()

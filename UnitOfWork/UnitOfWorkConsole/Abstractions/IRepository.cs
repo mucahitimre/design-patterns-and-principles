@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace UnitOfWork.Abstractions;
+namespace UnitOfWorkConsole.Abstractions;
 
 public interface IRepository<TEntity> : IDisposable
         where TEntity : class, IEntity, new()

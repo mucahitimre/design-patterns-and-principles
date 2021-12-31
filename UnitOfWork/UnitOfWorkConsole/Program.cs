@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using UnitOfWorkConsole.Abstractions;
 
-namespace DesignPatternsAndPrinciplesConsole;
+namespace UnitOfWorkConsole;
 
 public class Program
 {

@@ -1,4 +1,4 @@
-﻿namespace UnitOfWork.Abstractions;
+﻿namespace UnitOfWorkConsole.Abstractions;
 
 public interface IContextHandler : IDisposable
 {

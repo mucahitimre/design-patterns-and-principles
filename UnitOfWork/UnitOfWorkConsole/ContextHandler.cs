@@ -1,4 +1,6 @@
-﻿namespace UnitOfWork
+﻿using UnitOfWorkConsole.Abstractions;
+
+namespace UnitOfWorkConsole
 {
     public class ContextHandler : IContextHandler
     {
