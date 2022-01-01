@@ -2,5 +2,5 @@
 
 public interface IReservationPrinter
 {
-    Task<string> GetDownloadUrl(string printerType, IReservation reservation);
+    Task<string> GetAsyncDownloadUrl(string printerType, IReservation reservation);
 }

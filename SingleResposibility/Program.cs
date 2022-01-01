@@ -18,6 +18,14 @@ public class Program
             EndDate = DateTime.Now.AddDays(5)
         };
 
+        /*
+         * Burada tüm işi bir method içerisinde yapabilecek iken soyutlama yaparak hem bağımlılıkları tersine çevirdik
+            hemde her iş kapsamlarını belirleyerek her sorumluluğu tekilleştirmeye çalıştık.
+         
+         * Bu şekilde bir değişiklil olması anında bunu sorumlu olduğu class'ta yapmak bizim için yeterli oluyor.         
+         */
+
+
         var finder = Service.GetService<IReservationFinder>();
         var hotels = finder.Search(requestModel);
         if (hotels != null && hotels.Any())
@@ -37,7 +45,7 @@ public class Program
             if (reservation.Id != default)
             {
                 var printer = Service.GetService<IReservationPrinter>();
-                var printerUrl = printer.GetDownloadUrl(PdfPrintProvider.KEY, reservation);
+                var printerUrl = printer.GetAsyncDownloadUrl(PdfPrintProvider.KEY, reservation);
 
                 var emailSender = Service.GetService<IEmailSender>();
                 emailSender.SendAsyncEmail(member, reservation);

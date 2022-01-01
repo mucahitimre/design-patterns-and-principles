@@ -15,7 +15,7 @@ public class ReservationPrinter : IReservationPrinter
         _reservationPrinters = reservationPrinters;
     }
 
-    public Task<string> GetDownloadUrl(string printerType, IReservation reservation)
+    public Task<string> GetAsyncDownloadUrl(string printerType, IReservation reservation)
     {
         var provider = _reservationPrinters.FirstOrDefault(w => w.Key == printerType.Trim());
         if (provider != null)
