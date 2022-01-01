@@ -348,3 +348,5 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+DependencyInversion/.vscode/launch.json
+DependencyInversion/.vscode/tasks.json
