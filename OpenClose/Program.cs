@@ -15,9 +15,9 @@ internal class Program
             .BuildServiceProvider();
 
         /*
-         * Ödeme tipi if case'i ile değilde dışarıdan gelen model ile alınıyor, 
-            ayrıca yeni bir ödeme iti eklendiğinde sadece eklemek ve context'den onun kullanmak istenişmesi yetiyor
-            bu şelikde genişlemeye-gelişmey açık değişime kapalı bir yapı inşa etmiş oluyoruz.
+         * Ödeme tipi if case'i ile değilde dışarıdan gelen model ile belirleniyor, 
+            ayrıca yeni bir ödeme iti eklendiğinde sadece interface'den türetmek ve context'den onun select edilmesi gerekiyor,
+            bu şelikde genişlemeye-gelişmeye açık değişime kapalı bir yapı inşa etmiş oluyoruz.
          */
 
         var manager = ioC.GetService<IPaymentManager>();
