@@ -33,10 +33,10 @@ public class NotificationService : INotificationService
             {
                 provider.Send(model);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // log..
-                throw e;
+                throw;
             }
         }
     }
