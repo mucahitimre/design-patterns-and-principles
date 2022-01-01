@@ -1,6 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using DependencyInversion.Abstractions;
+using DependencyInversion.Models;
+using DependencyInversion.Providers;
+using DependencyInversion.Services;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace DependencyInversionConsole;
+namespace DependencyInversion;
 
 internal class Program
 {

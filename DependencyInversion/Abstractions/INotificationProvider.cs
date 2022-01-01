@@ -1,4 +1,4 @@
-﻿namespace DependencyInversionConsole;
+﻿namespace DependencyInversion.Abstractions;
 
 public interface INotificationProvider
 {

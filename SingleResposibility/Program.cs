@@ -32,8 +32,9 @@ public class Program
                 EndDate = requestModel.EndDate,
             };
 
-            var builder = Service.GetService<IReservationBuilder>();
-            if (builder.Build(member, reservation))
+            var builder = Service.GetService<IReservationDao>();
+            builder.Insert(member, reservation);
+            if (reservation.Id != default)
             {
                 var printer = Service.GetService<IReservationPrinter>();
                 var printerUrl = printer.GetDownloadUrl(PdfPrintProvider.KEY, reservation);
@@ -70,7 +71,7 @@ public class Program
         }
 
         var host = serviceProvider
-            .AddScoped(typeof(IReservationBuilder), typeof(ReservationBuilder))
+            .AddScoped(typeof(IReservationDao), typeof(ReservationDao))
             .AddScoped(typeof(IReservationPrinter), typeof(ReservationPrinter))
             .AddScoped(typeof(IReservationFinder), typeof(ReservationFinder))
             .AddScoped(typeof(IEmailSender), typeof(EmailSender))

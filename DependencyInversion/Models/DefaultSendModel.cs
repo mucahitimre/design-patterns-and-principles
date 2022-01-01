@@ -1,4 +1,6 @@
-﻿namespace DependencyInversionConsole;
+﻿using DependencyInversion.Abstractions;
+
+namespace DependencyInversion.Models;
 
 public class DefaultSendModel : ISendModel
 {

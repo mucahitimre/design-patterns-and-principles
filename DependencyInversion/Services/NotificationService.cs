@@ -1,4 +1,6 @@
-﻿namespace DependencyInversionConsole;
+﻿using DependencyInversion.Abstractions;
+
+namespace DependencyInversion.Services;
 
 public class NotificationService : INotificationService
 {
@@ -11,6 +13,15 @@ public class NotificationService : INotificationService
 
     public void SendNotification(ISendModel model, Func<INotificationProvider, bool> func)
     {
+        /* 
+         * Burada INotificationProvider'dan implement edilmiş classları tek tek çağırarak kullanmak yerine
+                araya bir soyutlama katmanı(INotificationProvider) ekleyerek NotificationService üst katmanını 
+                alt katman(lar) olan NotificationProvider'lardan ayırmış ve bağımlılığı INotificationProvider'ın 
+                implement edileceği class'a aktarmış olduk.
+
+         * Yeni bir NotificationProvider eklendiğinde burada bir kod değiştirmek zorunda olmayacağız.
+         */
+
         foreach (var provider in _providers)
         {
             if (func != null && !func.Invoke(provider))
