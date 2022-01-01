@@ -36,7 +36,7 @@ public class NotificationService : INotificationService
             catch (Exception e)
             {
                 // log..
-                throw;
+                throw e;
             }
         }
     }
