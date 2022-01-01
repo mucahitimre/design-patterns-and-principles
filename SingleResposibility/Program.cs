@@ -22,7 +22,7 @@ public class Program
          * Burada tüm işi bir method içerisinde yapabilecek iken soyutlama yaparak hem bağımlılıkları tersine çevirdik
             hemde her iş kapsamlarını belirleyerek her sorumluluğu tekilleştirmeye çalıştık.
          
-         * Bu şekilde bir değişiklil olması anında bunu sorumlu olduğu class'ta yapmak bizim için yeterli oluyor.         
+         * Bu şekilde bir değişiklik olması anında, sorumlu olduğu yer tekilleşmiş oluyor ve artık bir yeri(class-method) değiştiemek için tek sebebimiz oluyor. 
          */
 
 
