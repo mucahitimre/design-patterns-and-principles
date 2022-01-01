@@ -8,6 +8,7 @@ public class AppleNotificationProvider : INotificationProvider
 
     public void Send(ISendModel model)
     {
+        System.Console.WriteLine(model.Message);
         //send android notification
     }
 }
