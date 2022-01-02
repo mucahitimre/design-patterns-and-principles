@@ -15,14 +15,16 @@ public class Program
             klima özelliğini'de ayrı bir interface ile yöneterek entegre etmiş olduk.
          */
 
-        var ferrari = new Ferrari();
+        //var ferrari = new Ferrari();
+        var ferrari = Ferrari.CreateByName("FERRARI CALIFORNIA");
         ferrari.Run();
         if (ferrari is IAirConditionable airConditionableFerrari)
         {
             airConditionableFerrari.OpenAirConditioning();
         }
 
-        var kartal = new Kartal();
+        //var kartal = new Kartal();
+        var kartal = Kartal.CreateByName("SLX");
         kartal.Run();
         if (kartal is IAirConditionable airConditionableKartal)
         {
