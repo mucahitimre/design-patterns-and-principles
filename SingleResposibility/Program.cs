@@ -25,9 +25,8 @@ public class Program
          * Bu şekilde bir değişiklik olması anında, sorumlu olduğu yer tekilleşmiş oluyor ve artık bir yeri(class-method) değiştiemek için tek sebebimiz oluyor. 
          */
 
-
-        var finder = Service.GetService<IReservationFinder>();
-        var hotels = finder.Search(requestModel);
+        var hotelFinder = Service.GetService<IHotelFinder>();
+        var hotels = hotelFinder.Search(requestModel);
         if (hotels != null && hotels.Any())
         {
             var selectedOtel = hotels.First();
@@ -70,20 +69,20 @@ public class Program
 
         foreach (var item in vendors)
         {
-            serviceProvider.AddScoped(typeof(IVendor), item);
+            serviceProvider.AddTransient(typeof(IVendor), item);
         }
 
         foreach (var item in providers)
         {
-            serviceProvider.AddScoped(typeof(IPrinterDataProvider), item);
+            serviceProvider.AddTransient(typeof(IPrinterDataProvider), item);
         }
 
         var host = serviceProvider
-            .AddScoped(typeof(IReservationDao), typeof(ReservationDao))
-            .AddScoped(typeof(IReservationPrinter), typeof(ReservationPrinter))
-            .AddScoped(typeof(IReservationFinder), typeof(ReservationFinder))
-            .AddScoped(typeof(IEmailSender), typeof(EmailSender))
-            .AddScoped(typeof(IPrinter), typeof(FilePrinter))
+            .AddTransient(typeof(IReservationDao), typeof(ReservationDao))
+            .AddTransient(typeof(IReservationPrinter), typeof(ReservationPrinter))
+            .AddTransient(typeof(IHotelFinder), typeof(HotelFinder))
+            .AddTransient(typeof(IEmailSender), typeof(EmailSender))
+            .AddTransient(typeof(IPrinter), typeof(FilePrinter))
             .BuildServiceProvider();
 
         return host;

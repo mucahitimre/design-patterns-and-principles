@@ -1,14 +1,12 @@
-﻿using SingleResposibility.Abstractions;
-using SingleResposibility.Models;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace SingleResposibility.Providers;
 
-public class ReservationFinder : IReservationFinder
+public class HotelFinder : IHotelFinder
 {
     private readonly IEnumerable<IVendor> _vendors;
 
-    public ReservationFinder(IEnumerable<IVendor> vendors)
+    public HotelFinder(IEnumerable<IVendor> vendors)
     {
         _vendors = vendors;
     }

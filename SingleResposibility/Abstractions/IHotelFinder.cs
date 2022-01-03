@@ -2,7 +2,7 @@
 
 namespace SingleResposibility.Abstractions;
 
-public interface IReservationFinder
+public interface IHotelFinder
 {
     List<IHotel> Search(SearchModel model);
 }
