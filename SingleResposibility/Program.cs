@@ -9,6 +9,7 @@ public class Program
         // Setup our DI
         ServiceProvider Service = BuildServices();
 
+        // current member
         var member = new Member();
         var requestModel = new SearchModel()
         {
