@@ -9,6 +9,6 @@
 ## LiskovsSubtitution (LSP)
   - Bir class yada interface'i implement eden nesne'nin o class yada interface'de ki tüm özellikleri gerçekleştirmesi yani özelliği taşıyor olması gerektiğidir, burada yerine geçen nesne'nin bazı özelliklerini gerçekleştirememesi yanlış soyutlama yapıldığı anlamına gelebilir.
 ## InterfaceSegregation (ISP)
-  - Interfaceleri tasarlarken iş kapsamını belirleyip işlerin farklılaştığı noktalarda interfacelerin ayrılması gerekir, işler ayrıştıkça yeniden kullanılabilirlik ve anlaşılabilirlik artacaktır, kavramları birbirinden ayırmak ve sorumlulukları dağıtmak daha rahat olacaktır.
+  - Interfaceleri tasarlarken iş kapsamını belirleyip işlerin farklılaştığı noktalarda interfacelerin ayrılması gerekir, işler ayrıştıkça yeniden kullanılabilirlik ve anlaşılabilirlik artacaktır, kavramları birbirinden ayırmak ve sorumlulukları dağıtmak gerekir.
 ## DependencyInversion (DIP)
   - Üst seviye işler yapan class'ın alt seviye iş yapan classlara doğrudan bağımlılığını tersine çevirmek için alt seviye işler yapan class'ları soyutlayarak (bkz:interface) üst seviye işler yapan classların alt seviyeye bağımlılığını tersine çevirmiş oluruz, bu da bize alt seviyede ki bir değişiklik üst seviyeyi etkilememiş olur. 
